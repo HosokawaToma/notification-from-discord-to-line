@@ -1,0 +1,20 @@
+# python関連
+__pycache__/
+venv/
+
+# git関連
+.git/
+.gitconfig
+.gitignore
+
+# エディタ関連
+.vscode/
+
+# docker関連
+Dockerfile
+.dockerignore
+
+# その他
+.env
+scripts/
+logs/

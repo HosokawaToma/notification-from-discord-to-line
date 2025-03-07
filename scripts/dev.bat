@@ -1,0 +1,1 @@
+docker run -it --rm -p 5000:5000 --env-file .env notification-from-discord-to-line

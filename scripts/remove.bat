@@ -1,0 +1,1 @@
+docker rm notification-from-discord-to-line
