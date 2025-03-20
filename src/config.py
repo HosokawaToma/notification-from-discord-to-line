@@ -25,5 +25,5 @@ def MYSQL_DATABASE() -> str:
     return os.getenv("MYSQL_DATABASE")
 
 
-def MYSQL_PORT() -> str:
-    return os.getenv("MYSQL_PORT")
+def MYSQL_PORT() -> int:
+    return int(os.getenv("MYSQL_PORT"))
