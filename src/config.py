@@ -9,5 +9,21 @@ def DISCORD_TOKEN() -> str:
     return os.getenv("DISCORD_TOKEN")
 
 
-def DATABASE_NAME() -> str:
-    return ".db"
+def MYSQL_HOST() -> str:
+    return "db"
+
+
+def MYSQL_USER() -> str:
+    return os.getenv("MYSQL_USER")
+
+
+def MYSQL_PASSWORD() -> str:
+    return os.getenv("MYSQL_PASSWORD")
+
+
+def MYSQL_DATABASE() -> str:
+    return os.getenv("MYSQL_DATABASE")
+
+
+def MYSQL_PORT() -> str:
+    return os.getenv("MYSQL_PORT")

@@ -1,5 +1,5 @@
 """Userクラスとデータベースとの連携を提供するモジュール"""
-import sqlite3
+import pymysql
 import database
 
 class User:
@@ -9,16 +9,13 @@ class User:
         self.discord_user_id = discord_user_id
         self.line_user_id = line_user_id
 
-    def __repr__(self):
-        return f"User(discord_user_id='{self.discord_user_id}', line_user_id='{self.line_user_id}')"
-
     @staticmethod
     def create_table():
-        """データベースとテーブルを作成（初回のみ）"""
+        """テーブルを作成（初回のみ）"""
         database.execute_query("""
         CREATE TABLE IF NOT EXISTS users (
-            discord_user_id TEXT PRIMARY KEY,
-            line_user_id TEXT UNIQUE NOT NULL
+            discord_user_id VARCHAR(255) PRIMARY KEY,
+            line_user_id VARCHAR(255) UNIQUE NOT NULL
         )
         """)
 
@@ -27,11 +24,11 @@ class User:
         """新しいユーザーを登録"""
         try:
             database.execute_query(
-                "INSERT INTO users (discord_user_id, line_user_id) VALUES (?, ?)",
+                "INSERT INTO users (discord_user_id, line_user_id) VALUES (%s, %s)",
                 (discord_user_id, line_user_id)
             )
             return cls(discord_user_id, line_user_id)
-        except sqlite3.IntegrityError:
+        except pymysql.err.IntegrityError:
             print("Error: このユーザーは既に存在します")
             return None
 
@@ -39,11 +36,11 @@ class User:
     def get_all(cls):
         """すべてのユーザーを取得"""
         rows = database.fetch_query("SELECT * FROM users")
-        return [cls(*row) for row in rows]
+        return [cls(**row) for row in rows]
 
     def delete(self):
-        """ユーザーを削除（discord_user_id と line_user_id の両方を指定）"""
+        """ユーザーを削除"""
         database.execute_query(
-            "DELETE FROM users WHERE discord_user_id = ? AND line_user_id = ?",
+            "DELETE FROM users WHERE discord_user_id = %s AND line_user_id = %s",
             (self.discord_user_id, self.line_user_id)
         )

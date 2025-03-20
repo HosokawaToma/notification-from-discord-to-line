@@ -1,6 +1,7 @@
 """MonitoringChannelクラスとデータベースとの連携を提供するモジュール"""
-import sqlite3
+import pymysql
 import database
+
 
 class MonitoringChannel:
     """新しいメッセージがあるか監視するDiscordのチャンネルを管理するクラス。"""
@@ -17,8 +18,8 @@ class MonitoringChannel:
         """データベースとテーブルを作成（初回のみ）"""
         database.execute_query("""
         CREATE TABLE IF NOT EXISTS monitoring_channels (
-            discord_grid_id TEXT NOT NULL,
-            discord_channel_id TEXT NOT NULL,
+            discord_grid_id VARCHAR(255) NOT NULL,
+            discord_channel_id VARCHAR(255) NOT NULL,
             PRIMARY KEY (discord_grid_id, discord_channel_id)
         )
         """)
@@ -28,11 +29,11 @@ class MonitoringChannel:
         """新しい監視チャンネルを登録"""
         try:
             database.execute_query(
-                "INSERT INTO monitoring_channels (discord_grid_id, discord_channel_id) VALUES (?, ?)",
+                "INSERT INTO monitoring_channels (discord_grid_id, discord_channel_id) VALUES (%s, %s)",
                 (discord_grid_id, discord_channel_id)
             )
             return cls(discord_grid_id, discord_channel_id)
-        except sqlite3.IntegrityError:
+        except pymysql.err.IntegrityError:
             print("Error: このチャンネルは既に存在します")
             return None
 
@@ -40,11 +41,11 @@ class MonitoringChannel:
     def get_all(cls):
         """すべての監視チャンネルを取得"""
         rows = database.fetch_query("SELECT * FROM monitoring_channels")
-        return [cls(*row) for row in rows]
+        return [cls(**row) for row in rows]
 
     def delete(self):
         """特定の監視チャンネルを削除"""
         database.execute_query(
-            "DELETE FROM monitoring_channels WHERE discord_grid_id = ? AND discord_channel_id = ?",
+            "DELETE FROM monitoring_channels WHERE discord_grid_id = %s AND discord_channel_id = %s",
             (self.discord_grid_id, self.discord_channel_id)
         )
