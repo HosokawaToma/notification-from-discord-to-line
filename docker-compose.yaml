@@ -1,8 +1,22 @@
 version: '3.8'
 
 services:
+  db:
+    image: mysql:latest
+    restart: always
+    env_file: .env
+    ports:
+      - "${MYSQL_PORT}:3306"
+    volumes:
+      - mysqldata:/var/lib/mysql
+
   discord-bot:
     build: .
+    depends_on:
+      - db
     env_file: .env
     ports:
       - "${DISCORD_PORT}:5000"
+
+volumes:
+  mysqldata:
