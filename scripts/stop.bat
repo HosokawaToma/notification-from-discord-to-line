@@ -1,1 +1,0 @@
-docker stop notification-from-discord-to-line
