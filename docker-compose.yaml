@@ -11,11 +11,17 @@ services:
       - "${MYSQL_PORT}:3306"
     volumes:
       - mysqldata:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p${MYSQL_ROOT_PASSWORD}"]
+      interval: 5s
+      retries: 5
+      start_period: 10s
 
   discord-bot:
     build: .
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     env_file: .env
     ports:
       - "${DISCORD_PORT}:5000"
